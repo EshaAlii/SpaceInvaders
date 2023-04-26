@@ -1,163 +1,103 @@
-#include <GL/freeglut.h>
-#include <iostream>
+#include <GL/glut.h>
 
-//=================================================================================================
-// CALLBACKS
-//=================================================================================================
+// Dimensions of the screen
+const float SCREEN_WIDTH = 480.0f;
+const float SCREEN_HEIGHT = 750.0f;
 
-//-----------------------------------------------------------------------------
-// CALLBACK DOCUMENTATION
-// https://www.opengl.org/resources/libraries/glut/spec3/node45.html
-// http://freeglut.sourceforge.net/docs/api.php#WindowCallback
-//-----------------------------------------------------------------------------
+// Position + Size of player
+float trianglePos[] = {SCREEN_WIDTH / 2.0f, 90.0f}; // position of the triangle (starts at the bottom)
+float triangleSize[] = {30.0f, 30.0f}; // size of the triangle
 
-void idle_func()
+// Display Function
+void display()
 {
-	//uncomment below to repeatedly draw new frames
-	//glutPostRedisplay();
+    // Clear Screen
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Reset modelview matrix
+    glLoadIdentity();
+
+    // Draw our player
+    glBegin(GL_TRIANGLES);
+    glColor3f(1.0f, 0.0f, 0.0f);
+    glVertex2f(trianglePos[0], trianglePos[1]);
+    glVertex2f(trianglePos[0] + triangleSize[0] / 2.0f, trianglePos[1] + triangleSize[1]);
+    glVertex2f(trianglePos[0] + triangleSize[0], trianglePos[1]);
+    glEnd();
+
+    // Swap Buffers
+    glutSwapBuffers();
+
 }
 
-void reshape_func( int width, int height )
+// Keyboard Function
+void keyboard(unsigned char key, int x, int y)
 {
-	glViewport( 0, 0, width, height );
-	glutPostRedisplay();
+    // For each key on our keyboard
+    switch (key)
+    {
+        // When the escape key is pressed
+        case 27:
+            // We exit the game
+            exit(0);
+            break;
+
+        // When a is pressed we move the triangle to the left
+        case 'a':
+            if (trianglePos[0] > 0)
+            {
+                trianglePos[0] -= 15.0f;
+            }
+            break;
+
+        // When d is pressed we move the triangle to the right
+        case 'd':
+            if (trianglePos[0] + triangleSize[0] < SCREEN_WIDTH)
+            {
+                trianglePos[0] += 15.0f;
+            }
+            break;
+    }
+
+    // Redraw the scene
+    glutPostRedisplay();
 }
 
-void keyboard_func( unsigned char key, int x, int y )
+int main(int argc, char** argv)
 {
-	switch( key )
-	{
-		case 'w':
-		{
-			break;
-		}
+    // Intialize glut
+    glutInit(&argc, argv);
 
-		case 'a':
-		{
-			break;
-		}
+    // Enable double buffering + set color format
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 
-		case 's':
-		{
-			break;
-		}
+    // Set Window Size
+    glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-		case 'd':
-		{
-			break;
-		}
+     // Create window
+    glutCreateWindow("OpenGL Example");
 
-		// Exit on escape key press
-		case '\x1B':
-		{
-			exit( EXIT_SUCCESS );
-			break;
-		}
-	}
+    // Set Display callback function
+    glutDisplayFunc(display);
 
-	glutPostRedisplay();
-}
+    // Set keyboard callback function
+    glutKeyboardFunc(keyboard);
 
-void key_released( unsigned char key, int x, int y )
-{
-}
+    // Switch to projection mode
+    glMatrixMode(GL_PROJECTION);
 
-void key_special_pressed( int key, int x, int y )
-{
-}
+    // Reset projection matrix
+    glLoadIdentity();
 
-void key_special_released( int key, int x, int y )
-{
-}
+    // Set projection matrix
+    glOrtho(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT, -1, 1);
 
-void mouse_func( int button, int state, int x, int y )
-{
-}
+    // Switch back to modelview mode
+    glMatrixMode(GL_MODELVIEW);
 
-void passive_motion_func( int x, int y )
-{
-}
+    // Enter main loop
+    glutMainLoop();
 
-void active_motion_func( int x, int y )
-{
-}
-
-//=================================================================================================
-// RENDERING
-//=================================================================================================
-
-void display_func( void )
-{
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-	glBegin( GL_LINES );
-		glColor3f( 1.0f, 0.0f, 0.0f );
-		glVertex2f( -0.5f, 0.0f );
-		glColor3f( 0.0f, 1.0f, 0.0f );
-		glVertex2f( 0.5f, 0.0f );
-	glEnd();
-
-	glColor3f( 0.0f, 0.0f, 1.0f );
-	glBegin( GL_LINES );
-		glVertex2f( 0.0f, -0.5f );
-		glVertex2f( 0.0f, 0.5f );
-	glEnd();
-
-	glColor3f( 1.0f, 1.0f, 1.0f );
-	glBegin( GL_TRIANGLES );
-		glVertex2f( 0.1f, 0.1f );
-		glVertex2f( 0.4f, 0.1f );
-		glVertex2f( 0.25f, 0.4f );
-	glEnd();
-
-	glutSwapBuffers();
-}
-
-//=================================================================================================
-// INIT
-//=================================================================================================
-
-void init( void )
-{
-	// Print some info
-	std::cout << "Vendor:         " << glGetString( GL_VENDOR   ) << "\n";
-	std::cout << "Renderer:       " << glGetString( GL_RENDERER ) << "\n";
-	std::cout << "OpenGL Version: " << glGetString( GL_VERSION  ) << "\n\n";
-
-	// Set the background color
-	glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
-
-	std::cout << "Finished initializing...\n\n";
-}
-
-//=================================================================================================
-// MAIN
-//=================================================================================================
-
-int main( int argc, char** argv )
-{
-	glutInit( &argc, argv );
-
-	glutInitWindowPosition( 100, 100 );
-	glutInitWindowSize( 800, 600 );
-	glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH );
-
-	glutCreateWindow( "Basic OpenGL Example" );
-
-	glutDisplayFunc( display_func );
-	glutIdleFunc( idle_func );
-	glutReshapeFunc( reshape_func );
-	glutKeyboardFunc( keyboard_func );
-	glutKeyboardUpFunc( key_released );
-	glutSpecialFunc( key_special_pressed );
-	glutSpecialUpFunc( key_special_released );
-	glutMouseFunc( mouse_func );
-	glutMotionFunc( active_motion_func );
-	glutPassiveMotionFunc( passive_motion_func );
-
-	init();
-
-	glutMainLoop();
-
-	return EXIT_SUCCESS;
+    // End Program
+    return 0;
 }
