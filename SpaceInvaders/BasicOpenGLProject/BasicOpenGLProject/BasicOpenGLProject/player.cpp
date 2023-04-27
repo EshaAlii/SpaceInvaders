@@ -61,8 +61,8 @@ void Player::playerRight(unsigned char key)
     glutPostRedisplay();
 }
 
-//  Our "setter function" for our player to update their position
-void Player::setPlayer(float x, float y)
+// Our "setter function" for our player's x position
+void Player::setPlayer(float x)
 {
     // Point to current instance of their x position
    this->x = x;
