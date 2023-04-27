@@ -1,11 +1,13 @@
 #include "player.h"
+#include "stb_image.h"
 
+#define STB_IMAGE_IMPLEMENTATION
 #define SCREEN_WIDTH 480
 
 // Default constructor
 Player::Player()
 {
-    // Set the Player's position
+    // Set the Player's positions
     x = 240.0f;
     y = 90.0f;
 
@@ -19,10 +21,10 @@ void Player::display()
 {
     // Represent them with a triangle
     glBegin(GL_TRIANGLES);
-     glColor3f(1.0f, 0.0f, 0.0f);
-     glVertex2f(x,y);
-     glVertex2f(x + width / 2.0f, y + height);
-     glVertex2f(x + width, y);
+    glColor3f(1.0f, 0.0f, 0.0f);
+    glVertex2f(x,y);
+    glVertex2f(x + width / 2.0f, y + height);
+    glVertex2f(x + width, y);
     glEnd();
 }
 
@@ -36,7 +38,7 @@ void Player::playerLeft(unsigned char key)
         if (x > 1){
 
             // The player will move left
-            x -= 15.0f;
+            x = x - 15.0f;
         }
     }
 
@@ -54,7 +56,7 @@ void Player::playerRight(unsigned char key)
         if (x + width + 1 < SCREEN_WIDTH)
         {
             // The player will move right
-            x += 15.0f;
+            x = x + 15.0f;
         }
     }
     // Redisplay Player
@@ -69,9 +71,12 @@ void Player::setPlayer(float x)
 }
 
 // Function to have the player shoot a bullet
-void Player::playerShoot()
+void Player::playerShoot(unsigned char key)
 {
-    // Implement code
+    if (key == ' ')
+    {
+        // Player shoots a bullet
+    }
 }
 
 // Destructor of Player
@@ -79,4 +84,3 @@ Player::~Player()
 {
     // Implement player death + 3 lives of player here (if player get's hit thrice, they die)
 }
-
