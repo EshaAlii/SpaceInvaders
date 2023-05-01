@@ -8,31 +8,31 @@
 class Enemy
 {
 public:
-    // x and y position of the enemy object(s)
-
     float x;
     float y;
-
-    // dimensions of the enemy object(s)
 
     float width;
     float height;
 
-    // speed at which enemies move
-
     float speed;
+    int dir; // 0 for left, 1 for right
 
-    // determines direction enemies are moving in
+    bool hit;
 
-    int dir;
+    bool visible;
+
+    int type;
 
     Enemy();
 
-    void display();
+    virtual void display();
 
     void automove();
 
     void attack();
+
+    // Return the type of the enemy
+    virtual int getType();
 
     ~Enemy();
 };
