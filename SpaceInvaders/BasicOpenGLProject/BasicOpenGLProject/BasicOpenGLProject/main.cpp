@@ -1,76 +1,135 @@
-#include <GL/glut.h>
-#include "player.h"
-
 #define GL_SILENCE_DEPRECATION
 
+#include <GL/glut.h>
+#include "player.h"
+#include "enemy.h"
+#include "swarm.h"
+#include "bullet.h"
+#include "enemyBullet.h"
+#include <vector>
+
 // Dimensions of the screen
-const float SCREEN_WIDTH = 480.0f;
+#define SCREEN_WIDTH 480
 const float SCREEN_HEIGHT = 750.0f;
 
 // Create our player
 Player player;
 
+// Enemy enemy1;
+Swarm swarm(player);
+
 // Display Function
 void display()
 {
-    // Clear the screen
-    glClear(GL_COLOR_BUFFER_BIT);
+	// Clear the screen
+	glClear(GL_COLOR_BUFFER_BIT);
 
-    // Load Identity Matrix
-    glLoadIdentity();
+	// Load Identity Matrix
+	glLoadIdentity();
 
-    // Draw our player
-    player.display();
+	// Draw our player
+	player.display();
 
-    // Swap Buffers
-    glutSwapBuffers();
+	player.displayLife();
 
+	// Draw our player
+	// enemy1.display();
+
+	swarm.display();
+	// swarm.attack(1);
+
+	player.displayScore();
+
+	// update and display all active bullets
+	for (int i = 0; i < player.bullets.size(); i++)
+	{
+		// move the bullet
+		player.bullets[i].automove();
+
+		// display the bullet
+		player.bullets[i].display();
+	}
+
+	for (int i = 0; i < swarm.ebullets.size(); i++)
+	{
+		// move the bullet
+		swarm.ebullets[i].automove();
+
+		// display the bullet
+		swarm.ebullets[i].display();
+	}
+
+	// Swap Buffers
+	glutSwapBuffers();
 }
 
-// Keyboard Function for Player
 void playerKeyboard(unsigned char key, int x, int y)
 {
     player.playerLeft(key);
     player.playerRight(key);
+    player.playerShoot(key);
+    if (player.lives == 0)
+    {
+        player.revive(key);
+    }
     glutPostRedisplay();
 }
 
-int main(int argc, char** argv)
+void timer(int value)
 {
-    // Intialize glut
-    glutInit(&argc, argv);
+    // enemy1.automove();
+    // swarm.attack();
+    swarm.automove();
+    swarm.destroy(player.bullets);
+    swarm.reachesPlayer();
+    if (swarm.cleared == 45)
+    {
+        swarm.reposition();
+    }
+	// swarm.collision(player);
+    swarm.attack(1);
+    glutTimerFunc(50, timer, 0);
+}
 
-    // Enable double buffering + set color format
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+int main(int argc, char **argv)
+{
+	// Intialize glut
+	glutInit(&argc, argv);
 
-    // Set Window Size
-    glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	// Enable double buffering + set color format
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 
-    // Create window
-    glutCreateWindow("SpaceInvaders");
+	// Set Window Size
+	glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    // Set Display callback function
-    glutDisplayFunc(display);
+	// Create window
+	glutCreateWindow("SpaceInvaders");
 
-    // Switch to projection mode
-    glMatrixMode(GL_PROJECTION);
+	// Set Display callback function
+	glutDisplayFunc(display);
 
-    // Reset projection matrix
-    glLoadIdentity();
+	// Switch to projection mode
+	glMatrixMode(GL_PROJECTION);
 
-    // Set projection matrix
-    glOrtho(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT, -1, 1);
+	// Reset projection matrix
+	glLoadIdentity();
 
-    // Switch back to modelview mode
-    glMatrixMode(GL_MODELVIEW);
+	// Set projection matrix
+	glOrtho(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT, -1, 1);
 
-    // Set keyboard callback function
-    glutKeyboardFunc(playerKeyboard);
+	// Switch back to modelview mode
+	glMatrixMode(GL_MODELVIEW);
 
-    // Enter main loop
-    glutMainLoop();
+	// Set keyboard callback function
+	glutKeyboardFunc(playerKeyboard);
 
-    // End Program
-    return 0;
+	// Add this line to main function to update enemy1 position
+	glutTimerFunc(50, timer, 0);
+
+	// Enter main loop
+	glutMainLoop();
+
+	// End Program
+	return 0;
 }
 
