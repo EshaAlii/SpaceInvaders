@@ -23,6 +23,12 @@ public:
 
     int type;
 
+    float cooldown;         // Time between shots (in seconds)
+
+    float timeSinceLastShot;// Time elapsed since last shot (in seconds)
+
+    bool canShoot;          // Whether the enemy can currently shoot
+
     Enemy();
 
     virtual void display();
@@ -31,10 +37,21 @@ public:
 
     void attack();
 
+    void setTimeSinceLastShot(float time);
+
+    float getTimeSinceLastShot();
+
+    void setCanShoot(bool value);
+
+    bool getCanShoot() const;
+
+    float getCooldown();
+
     // Return the type of the enemy
     virtual int getType();
 
     ~Enemy();
 };
+
 
 #endif
