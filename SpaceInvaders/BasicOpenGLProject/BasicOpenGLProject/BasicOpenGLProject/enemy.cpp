@@ -25,6 +25,12 @@ Enemy::Enemy()
     visible = true;
 
     type = 0;
+
+    cooldown = 600;
+
+    timeSinceLastShot = 0;
+
+    canShoot = true;
 }
 
 void Enemy::display()
@@ -40,6 +46,7 @@ void Enemy::display()
         glVertex2f(x, y + height);
         glEnd();
     }
+    
 }
 
 void Enemy::automove()
@@ -81,6 +88,24 @@ int Enemy::getType()
 
 void Enemy::attack()
 {
+}
+
+void Enemy::setTimeSinceLastShot(float time) { 
+    timeSinceLastShot = time; 
+}
+
+float Enemy::getTimeSinceLastShot() { 
+    return timeSinceLastShot; 
+}
+
+void Enemy::setCanShoot(bool value) { 
+    value = getCanShoot();
+}
+bool Enemy::getCanShoot() const {
+    return canShoot; 
+}
+float Enemy::getCooldown() { 
+    return cooldown; 
 }
 
 Enemy::~Enemy()
